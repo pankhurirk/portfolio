@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://pankhuri-verma.com/sitemap.xml
