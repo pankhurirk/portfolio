@@ -33,7 +33,7 @@
 const API_BASE="https://job-finder-api.pankhurirk.workers.dev";
 const $=id=>document.getElementById(id);
 let allJobs=[], totalFound=0, hasSearched=false;
-const checked=id=>[...$(id).querySelectorAll("input:checked")].map(x=>x.value);
+const checked=id=>[...document.querySelectorAll("#"+id+"Options input:checked")].map(x=>x.value);
 function state(){return{keywords:$("keywords").value.trim(),location:$("location").value.trim()||"United Kingdom",posted:$("posted").value,distance:$("distance").value,seniority:checked("seniority"),industry:checked("industry"),arrangement:checked("arrangement")}}
 function escapeHtml(value){return String(value||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function safeUrl(value){try{const u=new URL(value);return u.protocol==="https:"?u.href:"#"}catch{return "#"}}
