@@ -44,23 +44,28 @@ export default {
 
     const what = trimmedParam(url, "what", 120);
     const where = trimmedParam(url, "where", 100);
+    const requestedCountry = url.searchParams.get("country");
+    const country = requestedCountry === "us" ? "us" : "gb";
     const distance = Number.parseInt(url.searchParams.get("distance") || "25", 10);
     const posted = Number.parseInt(url.searchParams.get("posted") || "", 10);
-    const isUkWide = !where || ["uk", "united kingdom", "great britain"].includes(where.toLowerCase());
+    const countryWideLocations = country === "us"
+      ? ["us", "usa", "united states", "united states of america"]
+      : ["uk", "united kingdom", "great britain"];
+    const isCountryWide = !where || countryWideLocations.includes(where.toLowerCase());
 
     const allowedDistances = new Set([5, 10, 25, 50, 100]);
     const allowedPostedDays = new Set([1, 3, 7, 14, 30]);
 
-    const apiUrl = new URL("https://api.adzuna.com/v1/api/jobs/gb/search/1");
+    const apiUrl = new URL("https://api.adzuna.com/v1/api/jobs/" + country + "/search/1");
     apiUrl.searchParams.set("app_id", env.ADZUNA_APP_ID);
     apiUrl.searchParams.set("app_key", env.ADZUNA_APP_KEY);
     apiUrl.searchParams.set("results_per_page", "20");
     apiUrl.searchParams.set("content-type", "application/json");
 
     if (what) apiUrl.searchParams.set("what", what);
-    if (!isUkWide) apiUrl.searchParams.set("where", where);
+    if (!isCountryWide) apiUrl.searchParams.set("where", where);
 
-    if (!isUkWide && allowedDistances.has(distance)) {
+    if (!isCountryWide && allowedDistances.has(distance)) {
       apiUrl.searchParams.set("distance", String(distance));
     }
 
