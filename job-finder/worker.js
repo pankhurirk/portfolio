@@ -45,8 +45,8 @@ async function handleMatch(request, env) {
       company: String(job.company || "").slice(0, 120),
       location: String(job.location || "").slice(0, 180),
       industry: String(job.category || "").slice(0, 100),
-      salary_min: Number.isFinite(Number(job.salary_min)) ? Number(job.salary_min) : null,
-      salary_max: Number.isFinite(Number(job.salary_max)) ? Number(job.salary_max) : null,
+      salary_min: job.salary_min == null || job.salary_min === "" ? null : Number.isFinite(Number(job.salary_min)) ? Number(job.salary_min) : null,
+      salary_max: job.salary_max == null || job.salary_max === "" ? null : Number.isFinite(Number(job.salary_max)) ? Number(job.salary_max) : null,
       description: String(job.description || "").slice(0, 600)
     })) : [];
 
