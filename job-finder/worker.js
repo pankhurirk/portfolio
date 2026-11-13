@@ -33,11 +33,11 @@ async function handleMatch(request, env) {
   }
 
   try {
-    const contentLength = Number(request.headers.get("Content-Length") || 0);
-    if (contentLength > 30000) {
+    const rawBody = await request.text();
+    if (rawBody.length > 30000) {
       return makeResponse({ error: "The matching request is too large." }, 413);
     }
-    const body = await request.json();
+    const body = JSON.parse(rawBody);
     const preferences = String(body.preferences || "").trim().slice(0, 1000);
     const jobs = Array.isArray(body.jobs) ? body.jobs.slice(0, 20).map((job) => ({
       id: String(job.id || "").slice(0, 80),
