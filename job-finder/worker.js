@@ -1,3 +1,5 @@
+import { collectEmployers, searchEmployers } from './employer-index.js';
+
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -96,6 +98,9 @@ async function handleMatch(request, env) {
 }
 
 export default {
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(collectEmployers(env));
+  },
   async fetch(request, env) {
     const url = new URL(request.url);
 
@@ -109,6 +114,11 @@ export default {
 
     if (url.pathname === "/api/match") {
       return handleMatch(request, env);
+    }
+
+    if (url.pathname === "/api/index/jobs" && request.method === "GET") {
+      try { return makeResponse(await searchEmployers(url, env), 200); }
+      catch { return makeResponse({ error: "The employer index is not ready. Choose Adzuna while the database and employer feeds are being set up." }, 503); }
     }
 
     if (url.pathname !== "/api/jobs" || request.method !== "GET") {
