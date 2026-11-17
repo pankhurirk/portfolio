@@ -11,7 +11,7 @@
     "binding": "AI"
   },
   "vars": {
-    "EMPLOYER_SOURCES": "[{\"type\":\"greenhouse\",\"board\":\"gitlab\",\"company\":\"GitLab\",\"industry\":\"IT and software\"},{\"type\":\"greenhouse\",\"board\":\"anthropic\",\"company\":\"Anthropic\",\"industry\":\"IT and software\"},{\"type\":\"greenhouse\",\"board\":\"databricks\",\"company\":\"Databricks\",\"industry\":\"IT and software\"}]"
+    "EMPLOYER_SOURCES": "[{\"type\":\"greenhouse\",\"board\":\"gitlab\",\"company\":\"GitLab\",\"industry\":\"IT and software\"},{\"type\":\"greenhouse\",\"board\":\"anthropic\",\"company\":\"Anthropic\",\"industry\":\"IT and software\"},{\"type\":\"greenhouse\",\"board\":\"databricks\",\"company\":\"Databricks\",\"industry\":\"IT and software\"},{\"type\":\"greenhouse\",\"board\":\"assemblyai\",\"company\":\"AssemblyAI\",\"industry\":\"IT and software\",\"startup\":true},{\"type\":\"greenhouse\",\"board\":\"grafanalabs\",\"company\":\"Grafana Labs\",\"industry\":\"IT and software\",\"startup\":true},{\"type\":\"greenhouse\",\"board\":\"launchdarkly\",\"company\":\"LaunchDarkly\",\"industry\":\"IT and software\",\"startup\":true}]"
   },
   "preview_urls": false,
   "keep_vars": true,
