@@ -1,0 +1,24 @@
+{
+  "name": "job-finder-api",
+  "main": "worker.js",
+  "compatibility_date": "2026-11-12",
+  "triggers": {
+    "crons": [
+      "15 6,18 * * *"
+    ]
+  },
+  "ai": {
+    "binding": "AI"
+  },
+  "vars": {
+    "EMPLOYER_SOURCES": "[{\"type\":\"greenhouse\",\"board\":\"gitlab\",\"company\":\"GitLab\",\"industry\":\"IT and software\"},{\"type\":\"greenhouse\",\"board\":\"anthropic\",\"company\":\"Anthropic\",\"industry\":\"IT and software\"},{\"type\":\"greenhouse\",\"board\":\"databricks\",\"company\":\"Databricks\",\"industry\":\"IT and software\"}]"
+  },
+  "preview_urls": false,
+  "keep_vars": true,
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true
+    }
+  }
+}
