@@ -1,4 +1,4 @@
-import { collectEmployers, searchEmployers } from './employer-index.js';
+import { collectEmployers, searchEmployers, searchNhsJobs } from './employer-index.js';
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -116,6 +116,10 @@ export default {
       return handleMatch(request, env);
     }
 
+    if(url.pathname==="/api/nhs/jobs" && request.method==="GET"){
+      try{return makeResponse(await searchNhsJobs(url),200)}
+      catch{return makeResponse({error:"NHS Jobs is temporarily unavailable. Please use the official NHS Jobs search."},502)}
+    }
     if (url.pathname === "/api/index/jobs" && request.method === "GET") {
       try { return makeResponse(await searchEmployers(url, env), 200); }
       catch { return makeResponse({ error: "The employer index is not ready. Choose Adzuna while the database and employer feeds are being set up." }, 503); }
