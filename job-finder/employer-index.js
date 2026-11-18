@@ -100,3 +100,36 @@ export async function searchEmployers(url, env) {
       location: { display_name: j.location }, category: { label: j.industry }, redirect_url: j.url, created: j.posted_at,
       level: j.level, industry: j.industry, arrangement: j.arrangement, source: j.source })) };
 }
+
+function xmlText(block, tag) {
+ const m=block.match(new RegExp("<"+tag+">([^]*?)</"+tag+">","i"));
+ return m ? plainText(m[1].replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g,"$1")) : "";
+}
+export function parseNhsJobs(xml, now=Date.now()) {
+ if(xml.length>2000000 || !/<nhsJobs[>\s]/.test(xml) || /<!DOCTYPE|<!ENTITY/i.test(xml))throw new Error("Invalid NHS feed");
+ const jobs=[...xml.matchAll(/<vacancyDetails>([\s\S]*?)<\/vacancyDetails>/g)].map(m=>{
+ const b=m[1], id=xmlText(b,"id"),title=xmlText(b,"title"),link=xmlText(b,"url"),closing=xmlText(b,"closeDate");
+ if(!id||!title||!/^https:\/\/(?:beta\.)?jobs\.nhs\.uk\/candidate\/jobadvert\//.test(link))throw new Error("Invalid NHS vacancy");
+ return {id:"nhs:"+id,title,description:xmlText(b,"description"),company:{display_name:xmlText(b,"employer")},
+ location:{display_name:[...b.matchAll(/<location>([\s\S]*?)<\/location>/g)].map(m=>plainText(m[1])).join("; ")},
+ category:{label:"Healthcare"},industry:"Healthcare",level:levelFor(title),arrangement:"Unknown",source:"NHS Jobs",
+ redirect_url:link,created:isoDate(xmlText(b,"postDate")),closing_date:closing,salary_text:xmlText(b,"salary")};
+ }).filter(j=>!j.closing_date||Date.parse(j.closing_date+"T23:59:59Z")>=now);
+ return {provider:"NHS Jobs",count:Number(xmlText(xml,"totalResults"))||jobs.length,results:jobs};
+}
+export async function searchNhsJobs(url) {
+ if(url.searchParams.get("country")==="us")return {provider:"NHS Jobs",count:0,results:[]};
+ const upstream=new URL("https://www.jobs.nhs.uk/api/v1/search_xml");
+ upstream.searchParams.set("externalOnly","true");upstream.searchParams.set("limit","100");upstream.searchParams.set("sort","publicationDateDesc");
+ const query=(url.searchParams.get("what")||"").trim().slice(0,120);if(query)upstream.searchParams.set("keyword",query);
+ const where=(url.searchParams.get("where")||"").trim().slice(0,100);
+ if(where&&!["uk","united kingdom","great britain","gb"].includes(where.toLowerCase())){
+ upstream.searchParams.set("location",where);upstream.searchParams.set("countryCode","GB-ENG");
+ const distance=Number(url.searchParams.get("distance"));upstream.searchParams.set("distance",String([5,10,25,50,100].includes(distance)?distance:25));
+ }
+ const days=Number(url.searchParams.get("posted"));
+ if([1,3,7,14,30].includes(days))upstream.searchParams.set("publishedFrom",new Date(Date.now()-days*86400000).toISOString().slice(0,10));
+ const response=await fetch(upstream,{headers:{Accept:"application/xml"},signal:AbortSignal.timeout(20000)});
+ if(!response.ok)throw new Error("NHS feed HTTP "+response.status);
+ return parseNhsJobs(await response.text());
+}
