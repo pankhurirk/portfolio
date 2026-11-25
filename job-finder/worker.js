@@ -56,7 +56,7 @@ async function handleMatch(request, env) {
       return makeResponse({ error: "Add priorities and at least one job to rank." }, 400);
     }
 
-    const modelResult = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", {
+    const modelResult = await env.AI.run("@cf/google/gemma-4-26b-a4b-it", {
       messages: [
         {
           role: "system",
@@ -69,16 +69,14 @@ async function handleMatch(request, env) {
         }
       ],
       response_format: { type: "json_object" },
-      max_tokens: 1200,
+      max_tokens: 2200,
       temperature: 0.1
     });
 
-    const raw = modelResult && typeof modelResult.response === "string"
-      ? modelResult.response
-      : JSON.stringify(modelResult || {});
-    const parsed = JSON.parse(raw);
+    const raw = modelResult?.choices?.[0]?.message?.content ?? modelResult?.response ?? modelResult;
+    const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
     const validIds = new Set(jobs.map((job) => job.id));
-    const matches = Array.isArray(parsed.matches)
+    const matches = Array.isArray(parsed?.matches)
       ? parsed.matches
           .filter((match) => validIds.has(String(match.id)))
           .map((match) => ({
