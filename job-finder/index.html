@@ -31,7 +31,7 @@
 <div class="panel-head"><h2>Refine your search</h2><button type="button" class="text-button" id="clearBtn">Clear all</button></div>
 <div class="filter-controls">
 <section class="filter-section filter-select-section"><h3 class="filter-title">Date posted</h3><select class="select" id="posted"><option value="">Any time</option><option value="1">Past 24 hours</option><option value="3">Past 3 days</option><option value="7">Past 7 days</option><option value="14">Past 14 days</option><option value="30">Past 30 days</option></select></section>
-<section class="filter-section filter-select-section"><h3 class="filter-title">Distance <small>from location</small></h3><select class="select" id="distance"><option value="5">Within 5 miles</option><option value="10">Within 10 miles</option><option value="25" selected>Within 25 miles</option><option value="50">Within 50 miles</option><option value="100">Within 100 miles</option></select></section>
+<section class="filter-section filter-select-section"><h3 class="filter-title">Distance <small>from location</small></h3><select class="select" id="distance"><option value="5">Within 5 miles</option><option value="10">Within 10 miles</option><option value="25" selected>Within 25 miles</option><option value="50">Within 50 miles</option><option value="100">Within 100 miles</option></select><p class="ai-hint" id="distanceHint"></p></section>
 <section class="filter-section"><button type="button" class="filter-title accordion-trigger" aria-expanded="false" aria-controls="seniorityOptions"><span>Seniority</span><span class="selected-label" id="senioritySelection">Choose</span><span class="accordion-chevron" aria-hidden="true">⌄</span></button><div class="checks accordion-content hidden" id="seniorityOptions"><label class="check"><input type="checkbox" value="Junior">Junior</label><label class="check"><input type="checkbox" value="Senior">Senior</label><label class="check"><input type="checkbox" value="Manager">Manager</label><label class="check"><input type="checkbox" value="Director">Director</label><label class="check"><input type="checkbox" value="Executive">Executive</label></div></section>
 <section class="filter-section"><button type="button" class="filter-title accordion-trigger" aria-expanded="false" aria-controls="industryOptions"><span>Industry</span><span class="selected-label" id="industrySelection">Choose</span><span class="accordion-chevron" aria-hidden="true">⌄</span></button><div class="checks accordion-content hidden" id="industryOptions"><label class="check"><input type="checkbox" value="IT and software">IT &amp; software</label><label class="check"><input type="checkbox" value="Finance">Finance</label><label class="check"><input type="checkbox" value="Healthcare">Healthcare</label><label class="check"><input type="checkbox" value="Education">Education</label><label class="check"><input type="checkbox" value="Consulting">Consulting</label><label class="check"><input type="checkbox" value="Retail">Retail</label><label class="check"><input type="checkbox" value="Public sector">Public sector</label><label class="check"><input type="checkbox" value="Other industries">Other</label></div></section>
 <section class="filter-section"><button type="button" class="filter-title accordion-trigger" aria-expanded="false" aria-controls="arrangementOptions"><span>Work arrangement</span><span class="selected-label" id="arrangementSelection">Choose</span><span class="accordion-chevron" aria-hidden="true">⌄</span></button><div class="checks accordion-content hidden" id="arrangementOptions"><label class="check"><input type="checkbox" value="Remote">Remote</label><label class="check"><input type="checkbox" value="Hybrid">Hybrid</label><label class="check"><input type="checkbox" value="On-site">On-site</label><label class="check"><input type="checkbox" value="Startup">Startup</label></div></section>
@@ -72,7 +72,13 @@ function isCountryWide(country,location){const value=(location||"").trim().toLow
 function state(){const country=$("country").value;return{profile:$("candidateProfile").value,country,keywords:$("keywords").value.trim(),location:$("location").value.trim()||defaultLocation(country),posted:$("posted").value,distance:$("distance").value,seniority:checked("seniority"),industry:checked("industry"),arrangement:checked("arrangement"),priorities:$("priorities").value.trim()}}
 function escapeHtml(value){return String(value||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function safeUrl(value){try{const u=new URL(value);return u.protocol==="https:"?u.href:"#"}catch{return "#"}}
-function summary(s){const tags=[];if(s.keywords)tags.push("Role: "+s.keywords);if(s.priorities)tags.push("Priorities: "+s.priorities.slice(0,90)+(s.priorities.length>90?"…":""));if(s.location)tags.push("Location: "+s.location);if(s.posted)tags.push("Posted: past "+(s.posted==="1"?"24 hours":s.posted+" days"));if(s.distance&&!isCountryWide(s.country,s.location))tags.push(s.distance+" mile radius");[...s.seniority,...s.industry,...s.arrangement].forEach(x=>tags.push(x));$("summary").innerHTML=tags.map(x=>'<span class="chip">'+escapeHtml(x)+"</span>").join("");$("summary").classList.toggle("hidden",!hasSearched)}
+function updateDistance(){
+ const country=$("country").value;
+ const nationwide=isCountryWide(country,$("location").value.trim()||defaultLocation(country));
+ $("distance").disabled=nationwide;
+ $("distanceHint").textContent=nationwide?"Enter a town, city or postcode to use a distance filter.":"Radius searches use Adzuna and NHS Jobs where available.";
+}
+function summary(s){updateDistance();const tags=[];if(s.keywords)tags.push("Role: "+s.keywords);if(s.priorities)tags.push("Priorities: "+s.priorities.slice(0,90)+(s.priorities.length>90?"…":""));if(s.location)tags.push("Location: "+s.location);if(s.posted)tags.push("Posted: past "+(s.posted==="1"?"24 hours":s.posted+" days"));if(s.distance&&!isCountryWide(s.country,s.location))tags.push(s.distance+" mile radius");[...s.seniority,...s.industry,...s.arrangement].forEach(x=>tags.push(x));$("summary").innerHTML=tags.map(x=>'<span class="chip">'+escapeHtml(x)+"</span>").join("");$("summary").classList.toggle("hidden",!hasSearched)}
 function searchable(job){return[job.title,job.description,job.company?.display_name,job.category?.label,job.location?.display_name].join(" ").toLowerCase()}
 const terms={
 "Junior":/\b(junior|entry[- ]level|graduate|associate|assistant|trainee)\b/i,
@@ -118,7 +124,8 @@ async function loadVacancies(country,filters={}){
  if(filters.keywords)params.set("what",filters.keywords);
  if(filters.posted)params.set("posted",filters.posted);
  if(filters.distance)params.set("distance",filters.distance);
- const sources=feeds.filter(feed=>!feed.ukOnly||country==="gb");
+ const radiusSearch=Boolean(filters.distance)&&!isCountryWide(country,filters.location);
+ const sources=feeds.filter(feed=>(!feed.ukOnly||country==="gb")&&(!radiusSearch||feed.path!=="/api/index/jobs"));
  const results=await Promise.allSettled(sources.map(async feed=>{
   const response=await fetch(API_BASE+feed.path+"?"+params,{signal:AbortSignal.timeout(20000)});
   const data=await response.json();
@@ -148,6 +155,7 @@ async function runSearch(){
   const {jobs,failures}=await loadVacancies(s.country,s);
   if(version!==requestVersion)return;
   allJobs=jobs;matchDetails={};matchMode="";
+  const radiusNote=s.distance&&!isCountryWide(s.country,s.location)?" Radius applies to Adzuna and NHS Jobs. Direct employer listings are omitted because their feed uses location text.":"";
   let status="Search complete.";
   if(s.priorities&&jobs.length){
    $("message").textContent="Matching vacancies against your description…";
@@ -177,7 +185,7 @@ async function runSearch(){
    }
   }
   if(failures.length)status+=" Unavailable: "+failures.join(", ")+".";
-  $("message").textContent=status;
+  $("message").textContent=status+radiusNote;
   renderJobs();
  }finally{
   if(version===requestVersion)$("searchButton").disabled=$("aiSearch").disabled=false;
@@ -241,5 +249,9 @@ $("saveBtn").addEventListener("click",()=>{localStorage.setItem(profileStorageKe
 try{const active=localStorage.getItem("job-finder-active-profile");if(["custom","pankhuri","purva"].includes(active))$("candidateProfile").value=active;const saved=JSON.parse(localStorage.getItem(profileStorageKey()));if(saved){$("country").value=saved.country||"gb";$("keywords").value=saved.keywords||"";$("location").value=saved.location||defaultLocation($("country").value);$("priorities").value=saved.priorities||"";$("posted").value=saved.posted||"";$("distance").value=saved.distance||"25";for(const group of["seniority","industry","arrangement"])document.querySelectorAll("#"+group+"Options input").forEach(x=>x.checked=saved[group]?.includes(x.value)||false);updateFilterLabels()}}catch(e){}
 
 if($("candidateProfile").value!=="custom")loadProfile();
+$("location").addEventListener("input",updateDistance);
+$("candidateProfile").addEventListener("change",updateDistance);
+$("clearBtn").addEventListener("click",updateDistance);
+updateDistance();
 </script>
 </body></html>
