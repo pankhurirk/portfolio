@@ -15,22 +15,30 @@
 <body>
 <header class="topbar"><div class="topbar-inner"><div class="brand"><span class="brand-mark" aria-hidden="true">↗</span><span>UK &amp; USA Job Finder</span></div><div class="top-note">A simpler way to find your next move</div></div></header>
 <main>
+<nav aria-label="Job Finder views" style="display:flex;gap:.75rem;margin-bottom:1rem"><button class="save-button" id="jobsTab" type="button" aria-pressed="true">Jobs</button><button class="save-button" id="companiesTab" type="button" aria-pressed="false">Companies</button></nav>
+<section class="results-panel hidden" id="companiesView">
+<h2>Companies</h2><p>Employers from the latest vacancies returned by the connected feeds. Hiring countries come from those vacancies.</p>
+<label for="companyName">Company name</label> <input class="select" id="companyName" type="search">
+<label for="companyCountry">Hiring country</label> <select class="select" id="companyCountry"><option value="">All covered countries</option><option value="gb">United Kingdom</option><option value="us">United States</option></select>
+<p><a id="registryLink" href="https://opencorporates.com/" target="_blank" rel="noopener noreferrer">Look up company records on OpenCorporates</a></p>
+<p id="companyStatus" role="status"></p><div id="companyResults"></div>
+</section>
+<div id="jobsView">
 <section class="hero" aria-labelledby="page-title"><div class="eyebrow">Your next opportunity starts here</div><h1 id="page-title">Find work that fits.</h1><p>Search live jobs in the UK or USA by location, seniority, industry and the way you want to work.</p>
-<form class="searchbar" id="searchForm"><label class="field-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.2 4.2"/></svg><input id="keywords" type="search" placeholder="Job title, skill or keyword" aria-label="Job title, skill or keyword"></label><label class="field-wrap"><span class="sr-only">Country</span><select id="country" aria-label="Country"><option value="gb">United Kingdom</option><option value="us">United States</option></select></label><label class="field-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg><input id="location" type="search" value="United Kingdom" placeholder="Town, city, state or ZIP/postcode" aria-label="Town, city, state or ZIP/postcode"></label><button class="primary" type="submit" id="searchButton">Search jobs <span aria-hidden="true">→</span></button></form></section>
+<form class="searchbar" id="searchForm"><label class="field-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.2 4.2"/></svg><input id="keywords" type="search" placeholder="Job title, skill or keyword" aria-label="Job title, skill or keyword"></label><label class="field-wrap"><span class="sr-only">Country</span><select id="country" aria-label="Country"><option value="gb">United Kingdom</option><option value="us">United States</option></select></label><label class="field-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg><input id="location" type="search" value="United Kingdom" placeholder="Town, city, state or ZIP/postcode" aria-label="Town, city, state or ZIP/postcode"></label><button class="primary" type="submit" id="searchButton">Search jobs <span aria-hidden="true">→</span></button></form><p><a style="color:inherit" href="https://www.civilservicejobs.service.gov.uk/csr/index.cgi" target="_blank" rel="noopener noreferrer">Search the official Civil Service Jobs site</a></p></section>
 <div class="layout">
 <aside class="panel filters" aria-label="Search filters">
 <div class="panel-head"><h2>Refine your search</h2><button type="button" class="text-button" id="clearBtn">Clear all</button></div>
 <div class="filter-controls">
-<section class="filter-section filter-select-section"><h3 class="filter-title"><label for="provider">Job source</label></h3><select class="select" id="provider"><option value="adzuna">Adzuna</option><option value="employers">Direct employer feeds</option><option value="nhs">NHS Jobs (UK)</option><option value="civil">Civil Service Jobs (official site)</option></select></section>
 <section class="filter-section filter-select-section"><h3 class="filter-title">Date posted</h3><select class="select" id="posted"><option value="">Any time</option><option value="1">Past 24 hours</option><option value="3">Past 3 days</option><option value="7">Past 7 days</option><option value="14">Past 14 days</option><option value="30">Past 30 days</option></select></section>
 <section class="filter-section filter-select-section"><h3 class="filter-title">Distance <small>from location</small></h3><select class="select" id="distance"><option value="5">Within 5 miles</option><option value="10">Within 10 miles</option><option value="25" selected>Within 25 miles</option><option value="50">Within 50 miles</option><option value="100">Within 100 miles</option></select></section>
 <section class="filter-section"><button type="button" class="filter-title accordion-trigger" aria-expanded="false" aria-controls="seniorityOptions"><span>Seniority</span><span class="selected-label" id="senioritySelection">Choose</span><span class="accordion-chevron" aria-hidden="true">⌄</span></button><div class="checks accordion-content hidden" id="seniorityOptions"><label class="check"><input type="checkbox" value="Junior">Junior</label><label class="check"><input type="checkbox" value="Senior">Senior</label><label class="check"><input type="checkbox" value="Manager">Manager</label><label class="check"><input type="checkbox" value="Director">Director</label><label class="check"><input type="checkbox" value="Executive">Executive</label></div></section>
 <section class="filter-section"><button type="button" class="filter-title accordion-trigger" aria-expanded="false" aria-controls="industryOptions"><span>Industry</span><span class="selected-label" id="industrySelection">Choose</span><span class="accordion-chevron" aria-hidden="true">⌄</span></button><div class="checks accordion-content hidden" id="industryOptions"><label class="check"><input type="checkbox" value="IT and software">IT &amp; software</label><label class="check"><input type="checkbox" value="Finance">Finance</label><label class="check"><input type="checkbox" value="Healthcare">Healthcare</label><label class="check"><input type="checkbox" value="Education">Education</label><label class="check"><input type="checkbox" value="Consulting">Consulting</label><label class="check"><input type="checkbox" value="Retail">Retail</label><label class="check"><input type="checkbox" value="Public sector">Public sector</label><label class="check"><input type="checkbox" value="Other industries">Other</label></div></section>
 <section class="filter-section"><button type="button" class="filter-title accordion-trigger" aria-expanded="false" aria-controls="arrangementOptions"><span>Work arrangement</span><span class="selected-label" id="arrangementSelection">Choose</span><span class="accordion-chevron" aria-hidden="true">⌄</span></button><div class="checks accordion-content hidden" id="arrangementOptions"><label class="check"><input type="checkbox" value="Remote">Remote</label><label class="check"><input type="checkbox" value="Hybrid">Hybrid</label><label class="check"><input type="checkbox" value="On-site">On-site</label><label class="check"><input type="checkbox" value="Startup">Startup</label></div></section>
 </div><div class="filter-footer"><button type="button" class="save-button" id="saveBtn">☆ &nbsp;Save this search</button></div></aside>
-<section class="panel ai-panel" aria-labelledby="ai-title"><div class="ai-kicker">Personalised matching</div><h2 id="ai-title">What matters most to you?</h2><p>Add your priorities and we’ll rank the search results by fit. For example: “senior SaaS leadership”, “remote or hybrid”, “mission-led healthcare”, or “salary above £120k”.</p><label class="ai-label" for="candidateProfile">Search profile</label><select class="select" id="candidateProfile"><option value="custom">Custom</option><option value="pankhuri">Pankhuri — UK support leadership</option><option value="purva">Purva — US financial crimes leadership</option></select><p class="ai-hint">Choose a profile to load its preferences. Saved searches are separate for each profile on this device. Matching uses advert summaries; verify the full description before excluding a role.</p><label class="ai-label" for="priorities">Your priorities</label><textarea id="priorities" maxlength="1000" placeholder="List the things you want in your next job, one per line…" aria-describedby="ai-privacy"></textarea><p class="ai-hint" id="ai-privacy">When AI matching is enabled, your priorities and job summaries are sent to the Job Finder’s Cloudflare service for scoring. If AI is unavailable, the page uses keyword matching. Your saved search stays in this browser.</p></section>
-<section class="results-panel" aria-live="polite"><div class="results-head"><div><h2 id="resultsTitle">Search live vacancies</h2><p id="resultsDescription">Enter a role or choose filters, then search to see matching listings.</p></div><span class="status-pill"><span class="status-dot"></span> Live listings</span></div><div class="search-summary hidden" id="summary"></div><div class="message" id="message">Listings are supplied by Adzuna. Use the filters to narrow results and open a job to view the full advert.</div><div class="jobs" id="jobs"></div><div id="pagination" class="hidden" style="display:flex;align-items:center;gap:12px;margin-top:18px"><button type="button" class="save-button" id="previousPage" style="width:auto;padding:0 16px">Previous</button><span id="pageLabel"></span><button type="button" class="save-button" id="nextPage" style="width:auto;padding:0 16px">Next</button></div><p class="fineprint">NHS Jobs searches load up to 100 adverts; use the <a href="https://www.jobs.nhs.uk/candidate/search" target="_blank" rel="noopener noreferrer">official NHS search</a> for all results. Civil Service Jobs opens externally. Employer feeds cover configured companies only; unknown dates and locations are not invented. Industry uses the employer classification supplied during setup. Adzuna job adverts and snippets are provided by <a href="https://www.adzuna.co.uk/" target="_blank" rel="noopener noreferrer">Adzuna</a>. Seniority and work arrangement filters are inferred from advert text, so some matches may be missed.</p></section>
-</div><div class="footer">UK &amp; USA Job Finder · Live UK and US job listings</div></main><div class="toast" id="toast" role="status"></div>
+<section class="panel ai-panel" aria-labelledby="ai-title"><div class="ai-kicker">Personalised matching</div><h2 id="ai-title">What matters most to you?</h2><p>Add your priorities and we’ll rank the search results by fit. For example: “senior SaaS leadership”, “remote or hybrid”, “mission-led healthcare”, or “salary above £120k”.</p><label class="ai-label" for="candidateProfile">Search profile</label><select class="select" id="candidateProfile"><option value="custom">Custom</option><option value="pankhuri">Pankhuri — UK support leadership</option><option value="purva">Purva — US financial crimes leadership</option></select><p class="ai-hint">Choose a profile to load its preferences. Saved searches are separate for each profile on this device. Matching uses advert summaries; verify the full description before excluding a role.</p><label class="ai-label" for="priorities">Describe the job you want</label><textarea id="priorities" maxlength="1000" placeholder="For example, Head of Technical Support at a B2B SaaS company, hybrid near London, paying £120k+" aria-describedby="ai-privacy"></textarea><button class="save-button" id="aiSearch" type="button">Find jobs with AI</button><p class="ai-hint" id="ai-privacy">When AI matching is enabled, your priorities and job summaries are sent to the Job Finder’s Cloudflare service for scoring. If AI is unavailable, the page uses keyword matching. Your saved search stays in this browser.</p></section>
+<section class="results-panel" aria-live="polite"><div class="results-head"><div><h2 id="resultsTitle">Search live vacancies</h2><p id="resultsDescription">Enter a role or choose filters, then search to see matching listings.</p></div><span class="status-pill"><span class="status-dot"></span> Live listings</span></div><div class="search-summary hidden" id="summary"></div><div class="message" id="message">Search combines Adzuna, direct employer feeds and NHS Jobs where available.</div><div class="jobs" id="jobs"></div><p class="fineprint">NHS Jobs searches load up to 100 adverts; use the <a href="https://www.jobs.nhs.uk/candidate/search" target="_blank" rel="noopener noreferrer">official NHS search</a> for all results. Civil Service Jobs opens externally. Employer feeds cover configured companies only; unknown dates and locations are not invented. Industry uses the employer classification supplied during setup. Adzuna job adverts and snippets are provided by <a href="https://www.adzuna.co.uk/" target="_blank" rel="noopener noreferrer">Adzuna</a>. Seniority and work arrangement filters are inferred from advert text, so some matches may be missed.</p></section>
+</div><div class="footer">UK &amp; USA Job Finder · Live UK and US job listings</div></div></main><div class="toast" id="toast" role="status"></div>
 <script>
 const API_BASE="https://job-finder-api.pankhurirk.workers.dev";
 const $=id=>document.getElementById(id);
@@ -38,30 +46,30 @@ const $=id=>document.getElementById(id);
 const profilePreferences={"pankhuri":"UK Head/Director of Technical Support, Customer Support, Customer Operations or AI/cloud platform operations. B2B SaaS, cloud, AI/ML preferred. UK remote or hybrid London/Reading. Minimum GBP 120000 annual compensation. Prioritise global team leadership, service transformation and enterprise escalations. Exclude unrelated Trust & Safety, fraud, risk, compliance, legal, HR, sales, marketing and junior IC roles. Exclude hospitality. Assess duties, not employer name. Unknown salary or mandatory experience needs review.","purva":"US Director, Senior Director, Head, Global Head, Executive Director or Managing Director in AML/BSA, financial crimes, KYC/CDD/EDD, SAR, transaction monitoring, regulatory remediation or compliance transformation. Prefer NY/NJ/East Coast, remote US or hybrid NYC/NJ. Minimum USD 220000 total annual compensation including bonus; unknown pay or base below this with unspecified bonus needs review. Prioritise consent orders, governance, enterprise transformation and cross-border leadership. Relevant experience: 15+ years EY/major US banks, $215m programme, 550+ team members. Exclude junior roles, pure accounting/tax, retail sales and unrelated engineering. Active law licence or mandatory specialist experience not evidenced needs review, not assumed absence. Work authorisation unconfirmed: never reject for sponsorship. Risk/compliance/FinCrime are desired. Use supplied description evidence only; incomplete details need review."};
 function profileStorageKey(){const p=$("candidateProfile").value;return p==="custom"?"uk-job-finder-search":"job-finder-search-"+p}
 function loadProfile(){
- ++requestVersion;clearTimeout(searchTimer);
+ ++requestVersion;
  const p=$("candidateProfile").value;
  $("country").value=p==="purva"?"us":"gb";$("location").value="";$("keywords").value=p==="purva"?"AML":p==="pankhuri"?"support":"";
  $("priorities").value=profilePreferences[p]||"";$("posted").value="";
  document.querySelectorAll(".filters input[type=checkbox]").forEach(x=>x.checked=false);
  // Keep broad retrieval: head/lead titles may have inconsistent inferred levels.
  try{const saved=JSON.parse(localStorage.getItem(profileStorageKey()));if(saved){
- for(const k of ["country","provider","keywords","location","priorities","posted","distance"])if(saved[k]!=null)$(k).value=saved[k];
+ for(const k of ["country","keywords","location","priorities","posted","distance"])if(saved[k]!=null)$(k).value=saved[k];
  for(const g of ["seniority","industry","arrangement"])document.querySelectorAll("#"+g+"Options input").forEach(x=>x.checked=(saved[g]||[]).includes(x.value));
  }localStorage.setItem("job-finder-active-profile",p)}catch{}
- allJobs=[];totalFound=0;matchDetails={};matchMode="";hasSearched=false;currentPage=1;
- $("jobs").innerHTML="";$("pagination").classList.add("hidden");$("summary").classList.add("hidden");
- $("searchButton").disabled=false;$("searchButton").textContent="Search jobs →";
+ allJobs=[];matchDetails={};matchMode="";hasSearched=false;
+ $("jobs").innerHTML="";$("summary").classList.add("hidden");
+ $("searchButton").disabled=$("aiSearch").disabled=false;$("searchButton").textContent="Search jobs →";
  $("resultsTitle").textContent="Search live vacancies";$("resultsDescription").textContent="Profile loaded. Adjust the keyword to explore other target roles.";
  $("message").className="message";$("message").textContent="Profile preferences loaded. Search to see matching jobs.";
- updateFilterLabels();updateProvider();
+ updateFilterLabels();
 }
 $("candidateProfile").addEventListener("change",loadProfile);
 
-let allJobs=[], totalFound=0, hasSearched=false, matchDetails={}, matchMode="", resultProvider="Adzuna", currentPage=1, requestVersion=0, lastSynced=null;
+let allJobs=[], hasSearched=false, matchDetails={}, matchMode="", requestVersion=0;
 const checked=id=>[...document.querySelectorAll("#"+id+"Options input:checked")].map(x=>x.value);
 function defaultLocation(country){return country==="us"?"United States":"United Kingdom"}
 function isCountryWide(country,location){const value=(location||"").trim().toLowerCase();return country==="us"?["us","usa","united states","united states of america"].includes(value):["uk","united kingdom","great britain"].includes(value)}
-function state(){const country=$("country").value;return{profile:$("candidateProfile").value,country,provider:$("provider").value,keywords:$("keywords").value.trim(),location:$("location").value.trim()||defaultLocation(country),posted:$("posted").value,distance:$("distance").value,seniority:checked("seniority"),industry:checked("industry"),arrangement:checked("arrangement"),priorities:$("priorities").value.trim()}}
+function state(){const country=$("country").value;return{profile:$("candidateProfile").value,country,keywords:$("keywords").value.trim(),location:$("location").value.trim()||defaultLocation(country),posted:$("posted").value,distance:$("distance").value,seniority:checked("seniority"),industry:checked("industry"),arrangement:checked("arrangement"),priorities:$("priorities").value.trim()}}
 function escapeHtml(value){return String(value||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function safeUrl(value){try{const u=new URL(value);return u.protocol==="https:"?u.href:"#"}catch{return "#"}}
 function summary(s){const tags=[];if(s.keywords)tags.push("Role: "+s.keywords);if(s.priorities)tags.push("Priorities: "+s.priorities.slice(0,90)+(s.priorities.length>90?"…":""));if(s.location)tags.push("Location: "+s.location);if(s.posted)tags.push("Posted: past "+(s.posted==="1"?"24 hours":s.posted+" days"));if(s.distance&&!isCountryWide(s.country,s.location))tags.push(s.distance+" mile radius");[...s.seniority,...s.industry,...s.arrangement].forEach(x=>tags.push(x));$("summary").innerHTML=tags.map(x=>'<span class="chip">'+escapeHtml(x)+"</span>").join("");$("summary").classList.toggle("hidden",!hasSearched)}
@@ -89,80 +97,149 @@ async function rankWithAI(preferences,jobs){const response=await fetch(API_BASE+
 function formatDate(value){if(!value)return"";const d=new Date(value);if(Number.isNaN(d.getTime()))return"";return d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}
 function salary(job){const low=Number(job.salary_min),high=Number(job.salary_max);if(!low&&!high)return"";const fmt=n=>"£"+Math.round(n).toLocaleString("en-GB");return low&&high?fmt(low)+"–"+fmt(high)+" a year":fmt(low||high)+" a year"}
 function inferLevel(job){const title=(job.title||"").toLowerCase();if(/\b(chief|ceo|cto|cfo|coo|president|executive)\b|\bvp\b|vice president/.test(title))return"Executive";if(/\bdirector\b/.test(title))return"Director";if(/\b(manager|head of|team lead)\b/.test(title))return"Manager";if(/\b(junior|entry[- ]level|graduate|associate|assistant|trainee)\b/.test(title))return"Junior";if(/\b(senior|sr\.?|lead|principal|staff)\b/.test(title))return"Senior";return"—"}
-function renderJobs(showAll=false){
- const s=state(),indexed=resultProvider==="Employer index",list=indexed||showAll?allJobs:allJobs.filter(j=>matchesFilter(j,s));
+function renderJobs(){
+ const list=allJobs.filter(job=>matchesFilter(job,state()));
  $("resultsTitle").textContent=list.length+" matching job"+(list.length===1?"":"s");
- $("resultsDescription").textContent=allJobs.length
-  ?resultProvider+" reports "+totalFound+" vacancies. "+(matchMode?"Ranked by "+matchMode.toLowerCase()+". ":"")+(showAll?"Showing returned listings without local filters.":"Showing "+list.length+" matches from "+allJobs.length+" ads returned.")
-  :resultProvider+" reports no vacancies for this search.";
- const pages=Math.max(1,Math.ceil(totalFound/50));$("pagination").classList.toggle("hidden",!indexed||pages<=1);$("pageLabel").textContent="Page "+currentPage+" of "+pages;$("previousPage").disabled=currentPage<=1;$("nextPage").disabled=currentPage>=pages;
+ $("resultsDescription").textContent=matchMode?"Ranked by "+matchMode.toLowerCase()+".":"Combined results from connected job feeds.";
  if(!list.length){
-  const empty=allJobs.length
-   ?resultProvider+" returned "+allJobs.length+" ads, but none matched the selected filters."
-   :resultProvider+" returned no ads for this search. Try a broader keyword, fewer filters or “Any time”. Employer feed coverage is limited to configured companies and recognised UK/US locations.";
-  $("jobs").innerHTML='<div class="empty">'+escapeHtml(empty)+(allJobs.length?' <br><br><button class="save-button" id="showAllResults" type="button">Show all '+allJobs.length+' returned ads</button>':"")+"</div>";
-  if(allJobs.length) $("showAllResults").addEventListener("click",()=>renderJobs(true));
-  return
+  $("jobs").innerHTML='<div class="empty">No matching vacancies in the returned listings. Try a broader search or fewer filters.</div>';
+  return;
  }
  const rows=list.map(job=>{const company=escapeHtml(job.company?.display_name||"Company not listed"),title=escapeHtml(job.title||"Untitled role"),level=escapeHtml(job.level||inferLevel(job)),category=escapeHtml(job.industry||job.category?.label||"Other"),location=escapeHtml(job.location?.display_name||"UK"),date=escapeHtml(formatDate(job.created)||"—"),link=safeUrl(job.redirect_url),fit=matchDetails[String(job.id)],fitHtml=fit?"<div class=\"fit-note "+(matchMode==="keyword fit"?"keyword-fit":"")+"\"><strong>"+escapeHtml(fit.score)+"% "+(matchMode==="AI match"?"AI match":"keyword fit")+"</strong> · "+escapeHtml(fit.reason)+"</div>":"";return "<tr><td class=\"company-cell\">"+company+"</td><td class=\"title-cell\"><a href=\""+link+"\" target=\"_blank\" rel=\"noopener noreferrer\">"+title+" ↗</a>"+fitHtml+"</td><td><span class=\"level-badge\">"+level+"</span></td><td><span class=\"category-badge\">"+category+"</span></td><td>"+location+"</td><td class=\"date-cell\">"+date+"</td></tr>"}).join("");
  $("jobs").innerHTML='<table class="jobs-table"><thead><tr><th>Company</th><th>Job title</th><th>Level</th><th>Industry</th><th>Location</th><th>Job posted date</th></tr></thead><tbody>'+rows+'</tbody></table>'
 }
-async function runSearch(page=1){
- const version=++requestVersion,s=state(),indexed=s.provider==="employers";
- currentPage=page;hasSearched=true;summary(s);
- if(s.provider==="civil"){
- ++requestVersion;allJobs=[];totalFound=0;
- $("searchButton").disabled=false;$("searchButton").textContent="Search jobs →";
- $("pagination").classList.add("hidden");$("resultsTitle").textContent="Civil Service Jobs";
- $("resultsDescription").textContent="Search on the official UK government recruitment website.";
- $("message").className="message";$("message").textContent="Civil Service Jobs requires human verification. Vacancies are not imported or AI-ranked here. Enter your keyword and location on the official site.";
- $("jobs").innerHTML='<a class="apply" href="https://www.civilservicejobs.service.gov.uk/csr/index.cgi" target="_blank" rel="noopener noreferrer">Open official Civil Service Jobs search ↗</a>';
- return;
- }
- $("searchButton").disabled=true;$("searchButton").textContent="Searching…";$("pagination").classList.add("hidden");
- $("jobs").innerHTML="";$("message").className="message";$("message").textContent="Looking for vacancies…";
- $("resultsTitle").textContent="Searching listings";$("resultsDescription").textContent="This may take a few seconds.";
- const params=new URLSearchParams({country:s.country,where:s.location,distance:s.distance});
- if(s.keywords)params.set("what",s.keywords);if(s.posted)params.set("posted",s.posted);
- if(indexed){params.set("page",page);params.set("levels",s.seniority.join(","));params.set("industries",s.industry.join(","));params.set("arrangements",s.arrangement.join(","))}
- try{
-  const response=await fetch(API_BASE+(indexed?"/api/index/jobs?":s.provider==="nhs"?"/api/nhs/jobs?":"/api/jobs?")+params.toString());
-  const data=await response.json();if(version!==requestVersion)return;
-  if(!response.ok)throw new Error(data.error||"The job search service returned an error ("+response.status+").");
-  allJobs=Array.isArray(data.results)?data.results:[];totalFound=Number.isFinite(Number(data.count))?Number(data.count):allJobs.length;
-  resultProvider=data.provider||(indexed?"Employer index":"Adzuna");lastSynced=data.last_synced||null;matchDetails={};matchMode="";
-  if(s.priorities&&allJobs.length){
-   $("message").textContent="Applying your priorities to the returned listings…";
-   try{const matches=await rankWithAI(s.priorities,allJobs);if(version!==requestVersion)return;matchMode="AI match";matches.forEach(m=>{const id=String(m.id);if(allJobs.some(j=>String(j.id)===id))matchDetails[id]={score:Math.max(0,Math.min(100,Number(m.score)||0)),reason:String(m.reason||"Fits your stated priorities.").slice(0,180)}})}
-   catch(error){if(version!==requestVersion)return;matchMode="keyword fit";localMatch(allJobs,s.priorities).forEach(m=>matchDetails[m.id]=m)}
-  }
-  if(version!==requestVersion)return;
-  if(matchMode)allJobs.sort((a,b)=>(matchDetails[String(b.id)]?.score||0)-(matchDetails[String(a.id)]?.score||0));
-  $("message").textContent=indexed
-   ?"Direct employer feeds: filters apply across the database before each page is returned. Locations use text matching; distance is unavailable. Jobs not seen for 3 days are hidden."+(lastSynced?" Latest successful collection: "+new Date(lastSynced).toLocaleString("en-GB")+".":"")
-   :s.provider==="nhs"?"NHS Jobs: up to 100 latest keyword/location matches loaded. Seniority, industry and arrangement filters apply only to these returned adverts. Descriptions are summaries. NHS publication dates may change when adverts are republished. Location radius currently uses England (GB-ENG).":"Search complete. "+totalFound+" vacancies found by Adzuna. Filters apply to the returned adverts.";
-  if(s.priorities)$("message").textContent+=matchMode==="AI match"?" AI ranks up to 20 adverts on this page against your priorities; other adverts remain unranked.":" Ranked by keyword overlap; AI is unavailable.";
-  renderJobs();
- }catch(error){if(version!==requestVersion)return;allJobs=[];totalFound=0;$("resultsTitle").textContent="Could not load listings";$("resultsDescription").textContent="The job search service did not return results.";$("message").className="message error";$("message").textContent=error.message==="Failed to fetch"?"Could not reach the job search API. Please try again.":error.message;$("jobs").innerHTML=""}
- finally{if(version===requestVersion){$("searchButton").disabled=false;$("searchButton").innerHTML='Search jobs <span aria-hidden="true">→</span>'}}
+const feeds=[
+ {name:"Adzuna",path:"/api/jobs"},
+ {name:"Direct employer feeds",path:"/api/index/jobs"},
+ {name:"NHS Jobs",path:"/api/nhs/jobs",ukOnly:true}
+];
+async function loadVacancies(country,filters={}){
+ const params=new URLSearchParams({country,where:filters.location||defaultLocation(country)});
+ if(filters.keywords)params.set("what",filters.keywords);
+ if(filters.posted)params.set("posted",filters.posted);
+ if(filters.distance)params.set("distance",filters.distance);
+ const sources=feeds.filter(feed=>!feed.ukOnly||country==="gb");
+ const results=await Promise.allSettled(sources.map(async feed=>{
+  const response=await fetch(API_BASE+feed.path+"?"+params,{signal:AbortSignal.timeout(20000)});
+  const data=await response.json();
+  if(!response.ok||!Array.isArray(data.results))throw new Error(feed.name);
+  return data.results.map((job,index)=>({...job,id:feed.path+":"+country+":"+(job.id??index),country}));
+ }));
+ const failures=sources.filter((feed,index)=>results[index].status==="rejected").map(feed=>feed.name);
+ const seen=new Set();
+ const jobs=results.flatMap(result=>result.status==="fulfilled"?result.value:[]).filter(job=>{
+  if(!job.company?.display_name||!job.title)return true;
+  const key=JSON.stringify([job.company?.display_name,job.title,job.location?.display_name].map(value=>String(value||"").trim().toLowerCase()));
+  if(seen.has(key))return false;
+  seen.add(key);return true;
+ });
+ return {jobs,failures};
 }
-$("previousPage").addEventListener("click",()=>runSearch(currentPage-1));
-$("nextPage").addEventListener("click",()=>runSearch(currentPage+1));
-function updateProvider(){const indexed=$("provider").value==="employers";$("distance").disabled=indexed;$("distance").title=indexed?"Employer feeds support location text matching, not distance.":""}
-$("provider").addEventListener("change",()=>{updateProvider();if(hasSearched)runSearch()});
-let searchTimer;$("keywords").addEventListener("input",()=>{clearTimeout(searchTimer);if(hasSearched&&$("provider").value==="employers")searchTimer=setTimeout(()=>runSearch(),450)});
+async function runSearch(){
+ const version=++requestVersion,s=state();
+ hasSearched=true;summary(s);
+ $("searchButton").disabled=$("aiSearch").disabled=true;
+ $("jobs").innerHTML="";
+ $("resultsTitle").textContent="Searching listings";
+ $("resultsDescription").textContent="Checking connected job feeds.";
+ $("message").className="message";
+ $("message").textContent="Looking for vacancies…";
+ try{
+  const {jobs,failures}=await loadVacancies(s.country,s);
+  if(version!==requestVersion)return;
+  allJobs=jobs;matchDetails={};matchMode="";
+  let status="Search complete.";
+  if(s.priorities&&jobs.length){
+   $("message").textContent="Matching vacancies against your description…";
+   const shortlist=jobs.filter(job=>matchesFilter(job,s));
+   const preliminary=Object.fromEntries(localMatch(shortlist,s.priorities).map(match=>[match.id,match]));
+   shortlist.sort((a,b)=>preliminary[b.id].score-preliminary[a.id].score);
+   const candidates=shortlist.slice(0,60);
+   if(candidates.length){
+    const batches=[];
+    for(let start=0;start<candidates.length;start+=20)batches.push(candidates.slice(start,start+20));
+    try{
+     const matches=(await Promise.all(batches.map(batch=>rankWithAI(s.priorities,batch)))).flat();
+     if(version!==requestVersion)return;
+     const ids=new Set(candidates.map(job=>job.id));
+     const ranked=matches.filter(match=>ids.has(String(match.id))&&Number.isFinite(Number(match.score)));
+     if(!ranked.length)throw new Error("No AI scores returned");
+     ranked.forEach(match=>{matchDetails[match.id]={score:Math.max(0,Math.min(100,Number(match.score))),reason:String(match.reason||"").slice(0,180)}});
+     allJobs=candidates.filter(job=>matchDetails[job.id]?.score>=50);
+     matchMode="AI match";
+     status="AI scored "+Object.keys(matchDetails).length+" shortlisted adverts. Showing scores of 50% or higher.";
+    }catch{
+     if(version!==requestVersion)return;
+     matchDetails=preliminary;allJobs=shortlist.filter(job=>preliminary[job.id].score>0);
+     matchMode="keyword fit";status="AI unavailable. Showing keyword matches.";
+    }
+    allJobs.sort((a,b)=>matchDetails[b.id].score-matchDetails[a.id].score);
+   }
+  }
+  if(failures.length)status+=" Unavailable: "+failures.join(", ")+".";
+  $("message").textContent=status;
+  renderJobs();
+ }finally{
+  if(version===requestVersion)$("searchButton").disabled=$("aiSearch").disabled=false;
+ }
+}
+let companyVacancies;
+function renderCompanies(){
+ const query=$("companyName").value.trim().toLowerCase(),country=$("companyCountry").value;
+ $("registryLink").href=query?"https://opencorporates.com/companies?q="+encodeURIComponent(query):"https://opencorporates.com/";
+ const companies=new Map();
+ for(const job of companyVacancies||[]){
+  const name=job.company?.display_name?.trim();
+  if(!name||!name.toLowerCase().includes(query))continue;
+  const key=name.toLowerCase();
+  if(!companies.has(key))companies.set(key,{name,countries:new Set(),count:0});
+  const company=companies.get(key);
+  company.countries.add(job.country);
+  if(!country||job.country===country)company.count++;
+ }
+ const rows=[...companies.values()].filter(company=>company.count).sort((a,b)=>a.name.localeCompare(b.name));
+ $("companyResults").innerHTML=rows.length?'<table class="jobs-table"><thead><tr><th>Company</th><th>Hiring countries</th><th>Vacancies found</th></tr></thead><tbody>'+rows.map(company=>"<tr><td>"+escapeHtml(company.name)+"</td><td>"+[...company.countries].map(defaultLocation).join(", ")+"</td><td>"+company.count+"</td></tr>").join("")+"</tbody></table>":"";
+ if(companyVacancies)$("companySummary").textContent=rows.length+" companies found.";
+}
+let companyLoad;
+$("companyStatus").insertAdjacentHTML("afterend",'<p id="companySummary"></p>');
+async function showView(companies){
+ $("jobsView").classList.toggle("hidden",companies);
+ $("companiesView").classList.toggle("hidden",!companies);
+ $("jobsTab").setAttribute("aria-pressed",String(!companies));
+ $("companiesTab").setAttribute("aria-pressed",String(companies));
+ if(!companies||companyVacancies||companyLoad)return;
+ $("companyStatus").textContent="Loading employers from UK and US vacancies…";
+ companyLoad=Promise.all(["gb","us"].map(country=>loadVacancies(country)));
+ try{
+  const results=await companyLoad;
+  companyVacancies=results.flatMap(result=>result.jobs);
+  const failures=[...new Set(results.flatMap(result=>result.failures))];
+  $("companyStatus").textContent=failures.length?"Some feeds were unavailable: "+failures.join(", ")+".":"";
+  renderCompanies();
+  if(!companyVacancies.length&&failures.length)companyVacancies=null;
+ }finally{companyLoad=null}
+}
+$("jobsTab").addEventListener("click",()=>showView(false));
+$("companiesTab").addEventListener("click",()=>showView(true));
+$("companyName").addEventListener("input",renderCompanies);
+$("companyCountry").addEventListener("change",renderCompanies);
+$("aiSearch").addEventListener("click",()=>{
+ if(!$("priorities").value.trim()){$("priorities").focus();return}
+ runSearch();
+});
 $("searchForm").addEventListener("submit",e=>{e.preventDefault();runSearch()});
 function updateFilterLabels(){for(const[group,label]of[["seniority","senioritySelection"],["industry","industrySelection"],["arrangement","arrangementSelection"]]){const values=checked(group);$(label).textContent=values.length?values.slice(0,2).join(", ")+(values.length>2?" +"+(values.length-2):""):"Choose"}}
 document.querySelectorAll(".accordion-trigger").forEach(button=>button.addEventListener("click",()=>{const panel=$(button.getAttribute("aria-controls"));const open=button.getAttribute("aria-expanded")==="true";button.setAttribute("aria-expanded",String(!open));panel.classList.toggle("hidden",open)}));
-document.querySelectorAll("#seniorityOptions input,#industryOptions input,#arrangementOptions input").forEach(input=>input.addEventListener("change",()=>{updateFilterLabels();summary(state());if(hasSearched){if(["employers","civil"].includes($("provider").value))runSearch();else renderJobs()}}));
+document.querySelectorAll("#seniorityOptions input,#industryOptions input,#arrangementOptions input").forEach(input=>input.addEventListener("change",()=>{updateFilterLabels();summary(state());if(hasSearched)runSearch()}));
 updateFilterLabels();
 $("country").addEventListener("change",()=>{const country=$("country").value;const otherDefault=defaultLocation(country==="us"?"gb":"us");if(!$("location").value.trim()||$("location").value.trim().toLowerCase()===otherDefault.toLowerCase())$("location").value=defaultLocation(country);summary(state());if(hasSearched)runSearch()});
 ["posted","distance"].forEach(id=>$(id).addEventListener("change",()=>{summary(state());if(hasSearched)runSearch()}));
-$("clearBtn").addEventListener("click",()=>{++requestVersion;clearTimeout(searchTimer);$("candidateProfile").value="custom";$("provider").value="adzuna";$("searchButton").disabled=false;$("searchButton").textContent="Search jobs →";$("pagination").classList.add("hidden");$("keywords").value="";$("country").value="gb";$("location").value="United Kingdom";$("priorities").value="";$("posted").value="";$("distance").value="25";document.querySelectorAll(".filters input[type=checkbox]").forEach(x=>x.checked=false);hasSearched=false;allJobs=[];totalFound=0;matchDetails={};matchMode="";$("summary").classList.add("hidden");$("resultsTitle").textContent="Search live vacancies";$("resultsDescription").textContent="Enter a role or choose filters, then search to see matching listings.";$("message").className="message";$("message").textContent="Listings are supplied by Adzuna. Use the filters to narrow results and open a job to view the full advert.";$("jobs").innerHTML="";updateFilterLabels();updateProvider()});
+$("clearBtn").addEventListener("click",()=>{++requestVersion;$("candidateProfile").value="custom";$("searchButton").disabled=$("aiSearch").disabled=false;$("searchButton").textContent="Search jobs →";$("keywords").value="";$("country").value="gb";$("location").value="United Kingdom";$("priorities").value="";$("posted").value="";$("distance").value="25";document.querySelectorAll(".filters input[type=checkbox]").forEach(x=>x.checked=false);hasSearched=false;allJobs=[];matchDetails={};matchMode="";$("summary").classList.add("hidden");$("resultsTitle").textContent="Search live vacancies";$("resultsDescription").textContent="Enter a role or choose filters, then search to see matching listings.";$("message").className="message";$("message").textContent="Search combines Adzuna, direct employer feeds and NHS Jobs where available.";$("jobs").innerHTML="";updateFilterLabels()});
 function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200)}
 $("saveBtn").addEventListener("click",()=>{localStorage.setItem(profileStorageKey(),JSON.stringify(state()));localStorage.setItem("job-finder-active-profile",$("candidateProfile").value);toast("Search saved on this device")});
-try{const active=localStorage.getItem("job-finder-active-profile");if(["custom","pankhuri","purva"].includes(active))$("candidateProfile").value=active;const saved=JSON.parse(localStorage.getItem(profileStorageKey()));if(saved){$("country").value=saved.country||"gb";$("provider").value=["employers","nhs","civil"].includes(saved.provider)?saved.provider:"adzuna";$("keywords").value=saved.keywords||"";$("location").value=saved.location||defaultLocation($("country").value);$("priorities").value=saved.priorities||"";$("posted").value=saved.posted||"";$("distance").value=saved.distance||"25";for(const group of["seniority","industry","arrangement"])document.querySelectorAll("#"+group+"Options input").forEach(x=>x.checked=saved[group]?.includes(x.value)||false);updateFilterLabels()}}catch(e){}
-updateProvider();
+try{const active=localStorage.getItem("job-finder-active-profile");if(["custom","pankhuri","purva"].includes(active))$("candidateProfile").value=active;const saved=JSON.parse(localStorage.getItem(profileStorageKey()));if(saved){$("country").value=saved.country||"gb";$("keywords").value=saved.keywords||"";$("location").value=saved.location||defaultLocation($("country").value);$("priorities").value=saved.priorities||"";$("posted").value=saved.posted||"";$("distance").value=saved.distance||"25";for(const group of["seniority","industry","arrangement"])document.querySelectorAll("#"+group+"Options input").forEach(x=>x.checked=saved[group]?.includes(x.value)||false);updateFilterLabels()}}catch(e){}
+
 if($("candidateProfile").value!=="custom")loadProfile();
 </script>
 </body></html>
